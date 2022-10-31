@@ -5,6 +5,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     [SerializeField] private float thrustSpeed = 1000f;
+    [SerializeField] private float rotateSpeed;
 
     private Rigidbody rocketRb;
        
@@ -39,7 +40,7 @@ public class Movement : MonoBehaviour
         }
     }
 
-    //Makes the rocket rotate
+    //Handles the rocket rotation
     private void ProcessRotation()
     {
         // -- Rotating the rocket --
@@ -47,13 +48,22 @@ public class Movement : MonoBehaviour
         //the rocket should rotate to the left
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            Debug.Log("Left arrow is being pressed");
+            ApplyRotation(Vector3.forward);
         }
         //While the player is holding the left arrow button
         //the rocket should rotate to the right
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            Debug.Log("Right arrow is being pressed");
+            ApplyRotation(-Vector3.forward);
         }
+    }
+
+    //Makes the rocket rotate
+    private void ApplyRotation(Vector3 rotationDirection)
+    {
+        //Calculates the rotation speed and make it frame independent
+        float rotateAcceleration = rotateSpeed * Time.deltaTime;
+
+        transform.Rotate(rotationDirection * rotateAcceleration);
     }
 }
