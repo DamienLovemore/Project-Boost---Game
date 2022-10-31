@@ -61,9 +61,17 @@ public class Movement : MonoBehaviour
     //Makes the rocket rotate
     private void ApplyRotation(Vector3 rotationDirection)
     {
+        //Makes the rocket rotation to not get buggy when it
+        //collides with another object
+        //(By disablying it)
+        rocketRb.freezeRotation = true;
+
         //Calculates the rotation speed and make it frame independent
         float rotateAcceleration = rotateSpeed * Time.deltaTime;
 
         transform.Rotate(rotationDirection * rotateAcceleration);
+
+        //Puts the rotation back to normal
+        rocketRb.freezeRotation = false;
     }
 }
