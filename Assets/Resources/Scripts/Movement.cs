@@ -6,12 +6,14 @@ public class Movement : MonoBehaviour
 {
     [SerializeField] private float thrustSpeed = 1000f;
     [SerializeField] private float rotateSpeed;
-
+        
     private Rigidbody rocketRb;
-       
+    private AudioSource thrustSound;
+
     void Start()
     {
         rocketRb = GetComponent<Rigidbody>();
+        thrustSound = GetComponent<AudioSource>();
     }
     
     void Update()
@@ -37,6 +39,25 @@ public class Movement : MonoBehaviour
             //AddForce considers the global coordinate system, not the
             //local rotation of the rocket.
             rocketRb.AddRelativeForce(acceleration, ForceMode.Force);
+
+            PlayThrustSound();
+        }
+        //If the rocket is not thrusting then the sound
+        //should stop
+        else
+        {
+            thrustSound.Stop();
+        }
+    }
+
+    //If the sound is not playing right now, play it
+    //(Waits for the sound to end to play it again,
+    //instead of playing it every thrust)
+    private void PlayThrustSound()
+    {
+        if (!thrustSound.isPlaying)
+        {
+            thrustSound.Play();
         }
     }
 
