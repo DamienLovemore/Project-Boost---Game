@@ -11,6 +11,8 @@ public class CollisionHandler : MonoBehaviour
 
     private AudioSource audioPlayer;
 
+    private bool isTransitioning = false;
+
     void Start()
     {
         audioPlayer = GetComponent<AudioSource>();
@@ -18,9 +20,11 @@ public class CollisionHandler : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        if (isTransitioning)
+            return;
+
         //The tag of the object that we collided into
         string collisionObjectTag = collision.gameObject.tag;
-
         switch (collisionObjectTag)
         {
             case "Friendly":                
@@ -37,8 +41,9 @@ public class CollisionHandler : MonoBehaviour
     //Things to do when finishing the level or losing it
     private void StartEndSequence()
     {
+        this.isTransitioning = true;
         //Makes the rocket engine stop making sound
-        GetComponent<Movement>().StopThrustSound();
+        audioPlayer.Stop();
         //Disable rocket movement
         GetComponent<Movement>().enabled = false;
     }

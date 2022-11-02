@@ -11,8 +11,6 @@ public class Movement : MonoBehaviour
     private Rigidbody rocketRb;
     private AudioSource thrustSound;
 
-    private bool isAlive;
-
     void Start()
     {
         rocketRb = GetComponent<Rigidbody>();
@@ -62,12 +60,6 @@ public class Movement : MonoBehaviour
         {
             thrustSound.PlayOneShot(mainEngine);
         }
-    }
-
-    //Makes the rocket engine stop making sounds
-    public void StopThrustSound()
-    {
-        thrustSound.Stop();
     }
 
     //Handles the rocket rotation
