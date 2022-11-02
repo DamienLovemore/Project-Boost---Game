@@ -6,12 +6,14 @@ using UnityEngine.SceneManagement;
 public class CollisionHandler : MonoBehaviour
 {
     [SerializeField] private float loadDelay= 2f;
+    [SerializeField] private AudioClip levelFinish;
+    [SerializeField] private AudioClip crashSFX;
 
-    private Movement rocketController;
+    private AudioSource audioPlayer;
 
     void Start()
     {
-        rocketController = GetComponent<Movement>();
+        audioPlayer = GetComponent<AudioSource>();
     }
 
     void OnCollisionEnter(Collision collision)
@@ -21,25 +23,30 @@ public class CollisionHandler : MonoBehaviour
 
         switch (collisionObjectTag)
         {
-            case "Friendly":
-                Debug.Log("This thing is friendly");
+            case "Friendly":                
                 break;
             case "Finish":
                 StartCoroutine(LevelFinish());
-                break;
-            case "Fuel":
-                Debug.Log("You picked up fuel");
-                break;
+                break;            
             default:
                 StartCoroutine(LevelRestart());
                 break;
         }
     }
 
+    //Things to do when finishing the level or losing it
+    private void StartEndSequence()
+    {
+        //Makes the rocket engine stop making sound
+        GetComponent<Movement>().StopThrustSound();
+        //Disable rocket movement
+        GetComponent<Movement>().enabled = false;
+    }
+
     private IEnumerator LevelFinish()
     {
-        //Disable rocket thrust movement because the level ended
-        rocketController.SetRocketDestroyed();
+        StartEndSequence();
+        audioPlayer.PlayOneShot(levelFinish);
         //Awaits for an amount of seconds before starting the
         //next level
         yield return new WaitForSeconds(this.loadDelay);
@@ -59,8 +66,8 @@ public class CollisionHandler : MonoBehaviour
     //Restart the level when the player loses
     private IEnumerator LevelRestart()
     {
-        //Disable rocket thrust movement because it was destroyed
-        rocketController.SetRocketDestroyed();
+        StartEndSequence();
+        audioPlayer.PlayOneShot(crashSFX);
         //Awaits for an amount of seconds before restarting the level
         yield return new WaitForSeconds(this.loadDelay);
 
