@@ -6,7 +6,9 @@ public class Movement : MonoBehaviour
 {
     [SerializeField] private float thrustSpeed = 1000f;
     [SerializeField] private float rotateSpeed;
-        
+    
+    private bool isRocketDestroyed = false;
+
     private Rigidbody rocketRb;
     private AudioSource thrustSound;
 
@@ -15,16 +17,31 @@ public class Movement : MonoBehaviour
         rocketRb = GetComponent<Rigidbody>();
         thrustSound = GetComponent<AudioSource>();
     }
-    
+
     void Update()
     {
         ProcessThrust();
         ProcessRotation();
     }
 
+    //When the rocket collided with something, then it
+    //the collider script updates the destroyed value
+    public void SetRocketDestroyed()
+    {
+        this.isRocketDestroyed = true;
+    }
+
     //Makes the rocket fly up
     private void ProcessThrust()
     {
+        //If the rocket was destroyed it should not be able to
+        //go up anymore
+        if (isRocketDestroyed)
+        {
+            thrustSound.Stop();
+            return;
+        }            
+
         // -- Going up --
         //While the player is holding the space button the
         //rocket should fly up
