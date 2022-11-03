@@ -9,6 +9,9 @@ public class CollisionHandler : MonoBehaviour
     [SerializeField] private AudioClip levelFinish;
     [SerializeField] private AudioClip crashSFX;
 
+    [SerializeField] private ParticleSystem levelFinishParticles;
+    [SerializeField] private ParticleSystem crashParticles;
+
     private AudioSource audioPlayer;
 
     private bool isTransitioning = false;
@@ -44,6 +47,8 @@ public class CollisionHandler : MonoBehaviour
         this.isTransitioning = true;
         //Makes the rocket engine stop making sound
         audioPlayer.Stop();
+        //Stops all the particles effects that are playing
+        GetComponent<Movement>().StopAllEffects();
         //Disable rocket movement
         GetComponent<Movement>().enabled = false;
     }
@@ -52,6 +57,7 @@ public class CollisionHandler : MonoBehaviour
     {
         StartEndSequence();
         audioPlayer.PlayOneShot(levelFinish);
+        levelFinishParticles.Play();
         //Awaits for an amount of seconds before starting the
         //next level
         yield return new WaitForSeconds(this.loadDelay);
@@ -73,6 +79,7 @@ public class CollisionHandler : MonoBehaviour
     {
         StartEndSequence();
         audioPlayer.PlayOneShot(crashSFX);
+        crashParticles.Play();
         //Awaits for an amount of seconds before restarting the level
         yield return new WaitForSeconds(this.loadDelay);
 

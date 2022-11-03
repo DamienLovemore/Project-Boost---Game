@@ -8,6 +8,10 @@ public class Movement : MonoBehaviour
     [SerializeField] private float rotateSpeed;
     [SerializeField] private AudioClip mainEngine;
 
+    [SerializeField] private ParticleSystem RocketBoosterParticles;
+    [SerializeField] private ParticleSystem LeftThrusterParticles;
+    [SerializeField] private ParticleSystem RightThrusterParticles;
+
     private Rigidbody rocketRb;
     private AudioSource thrustSound;
 
@@ -42,12 +46,14 @@ public class Movement : MonoBehaviour
             rocketRb.AddRelativeForce(acceleration, ForceMode.Force);
 
             PlayThrustSound();
+            PlayRocketBoosterEffect();
         }
         //If the rocket is not thrusting then the sound
         //should stop
         else
         {
             thrustSound.Stop();
+            RocketBoosterParticles.Stop();
         }
     }
 
@@ -62,6 +68,41 @@ public class Movement : MonoBehaviour
         }
     }
 
+    //Stops all particles effects when the user finish
+    //the level, or crashes
+    public void StopAllEffects()
+    {
+        RocketBoosterParticles.Stop();
+        LeftThrusterParticles.Stop();
+        RightThrusterParticles.Stop();
+    }
+
+    //If the particle is not currently playing, then play it
+    //If it is then do nothing
+    private void PlayRocketBoosterEffect()
+    {
+        if (!RocketBoosterParticles.isPlaying)
+        {
+            RocketBoosterParticles.Play();
+        }
+    }
+   
+    private void PlayLeftThrustEffect()
+    {
+        if (!LeftThrusterParticles.isPlaying)
+        {
+            LeftThrusterParticles.Play();
+        }
+    }
+
+    private void PlayRightThrustEffect()
+    {
+        if (!RightThrusterParticles.isPlaying)
+        {
+            RightThrusterParticles.Play();
+        }
+    }
+
     //Handles the rocket rotation
     private void ProcessRotation()
     {
@@ -70,13 +111,24 @@ public class Movement : MonoBehaviour
         //the rocket should rotate to the left
         if (Input.GetKey(KeyCode.LeftArrow))
         {
+            LeftThrusterParticles.Stop();
+            PlayRightThrustEffect();
             ApplyRotation(Vector3.forward);
         }
         //While the player is holding the left arrow button
         //the rocket should rotate to the right
         else if (Input.GetKey(KeyCode.RightArrow))
         {
+            RightThrusterParticles.Stop();
+            PlayLeftThrustEffect();
             ApplyRotation(-Vector3.forward);
+        }
+        //If it is not steering then it should stop the side
+        //thrusters
+        else
+        {
+            LeftThrusterParticles.Stop();
+            RightThrusterParticles.Stop();
         }
     }
 
