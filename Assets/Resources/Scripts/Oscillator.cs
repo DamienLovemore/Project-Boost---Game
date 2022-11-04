@@ -18,6 +18,13 @@ public class Oscillator : MonoBehaviour
     
     void Update()
     {
+        //Prevent divided by zero error in line 27
+        //(The lower the value of period the faster the object move)
+        //For float values instead of zero is best to use Epsilon, because
+        //floats can have really small values and never be zero)
+        if (this.period == Mathf.Epsilon)
+            return;
+
         // Time.time store how much time the game has been played
         // in seconds
         float cycles = Time.time / this.period;
