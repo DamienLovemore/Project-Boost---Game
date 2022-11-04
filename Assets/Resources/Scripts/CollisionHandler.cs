@@ -14,6 +14,7 @@ public class CollisionHandler : MonoBehaviour
 
     private AudioSource audioPlayer;
 
+    private bool isCollisionDisabled = false;
     private bool isTransitioning = false;
 
     void Start()
@@ -23,7 +24,7 @@ public class CollisionHandler : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (isTransitioning)
+        if ((isTransitioning) || (isCollisionDisabled))
             return;
 
         //The tag of the object that we collided into
@@ -53,7 +54,13 @@ public class CollisionHandler : MonoBehaviour
         GetComponent<Movement>().enabled = false;
     }
 
-    private IEnumerator LevelFinish()
+    //Disables the rocket collision system
+    public void DisableRocketCollision()
+    {
+        this.isCollisionDisabled = true;
+    }
+
+    public IEnumerator LevelFinish()
     {
         StartEndSequence();
         audioPlayer.PlayOneShot(levelFinish);
@@ -75,7 +82,7 @@ public class CollisionHandler : MonoBehaviour
     }
 
     //Restart the level when the player loses
-    private IEnumerator LevelRestart()
+    public IEnumerator LevelRestart()
     {
         StartEndSequence();
         audioPlayer.PlayOneShot(crashSFX);
